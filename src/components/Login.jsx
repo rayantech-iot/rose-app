@@ -5,7 +5,8 @@ const AUTHORIZED_USERS = {
   'victoire': '123456789',
   'rose': '123456789',
   'sarah': '123456789',
-  'shella': '123456789'
+  'shella': '123456789',
+  'fifa': '123456789'
 };
 
 function Login({ onLogin }) {
