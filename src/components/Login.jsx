@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Lock, User, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 const AUTHORIZED_USERS = {
-  'Victoire': '123456789',
+  'victoire': '123456789',
   'rose': '123456789',
   'sarah': '123456789',
   'shella': '123456789'
@@ -22,11 +22,13 @@ function Login({ onLogin }) {
 
     // Simulate a bit of loading for premium feel
     setTimeout(() => {
-      const normalizedUsername = username.trim();
+      const normalizedUsername = username.trim().toLowerCase();
       const expectedPassword = AUTHORIZED_USERS[normalizedUsername];
 
       if (expectedPassword && password === expectedPassword) {
-        onLogin(normalizedUsername);
+        // We pass the display name (original case preserved or capitalized)
+        const displayName = username.trim().charAt(0).toUpperCase() + username.trim().slice(1).toLowerCase();
+        onLogin(displayName);
       } else {
         setError('Identifiants incorrects. Veuillez réessayer.');
         setIsLoading(false);
@@ -55,7 +57,7 @@ function Login({ onLogin }) {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Ex: Victoire"
+                placeholder="Votre prénom (Ex: Rose)"
                 required
                 autoComplete="off"
               />
