@@ -30,10 +30,15 @@ function App() {
 
   // ── REVISION LIST ─────────────────────────────────
   useEffect(() => {
-    if (!localStorage.getItem('revisionQuestions')) {
-      localStorage.setItem('revisionQuestions', JSON.stringify([]));
+    if (user) {
+      if (!localStorage.getItem(`${user}_revisionQuestions`)) {
+        localStorage.setItem(`${user}_revisionQuestions`, JSON.stringify([]));
+      }
+      if (!localStorage.getItem(`${user}_stats`)) {
+        localStorage.setItem(`${user}_stats`, JSON.stringify({ totalAnswered: 0, totalCorrect: 0 }));
+      }
     }
-  }, []);
+  }, [user]);
 
   // ── QUIZ START ────────────────────────────────────
   const startQuiz = (mode, themeId = null) => {
@@ -46,7 +51,7 @@ function App() {
     } else if (mode === 'random') {
       filtered = [...questions].sort(() => Math.random() - 0.5).slice(0, 50);
     } else if (mode === 'revision') {
-      const revisionIds = JSON.parse(localStorage.getItem('revisionQuestions') || '[]');
+      const revisionIds = JSON.parse(localStorage.getItem(`${user}_revisionQuestions`) || '[]');
       filtered = questions.filter(q => revisionIds.includes(q.id));
     }
 
@@ -63,11 +68,20 @@ function App() {
     setResults(data);
     setView('result');
 
-    const revisionIds = JSON.parse(localStorage.getItem('revisionQuestions') || '[]');
+    const key = `${user}_revisionQuestions`;
+    const revisionIds = JSON.parse(localStorage.getItem(key) || '[]');
     const newErrors = data.errors.map(q => q.id);
     const updatedRevision = [...new Set([...revisionIds, ...newErrors])];
     const finalRevision = updatedRevision.filter(id => !data.correctIds.includes(id));
-    localStorage.setItem('revisionQuestions', JSON.stringify(finalRevision));
+    localStorage.setItem(key, JSON.stringify(finalRevision));
+
+    // Update global stats
+    const statsKey = `${user}_stats`;
+    const globalStats = JSON.parse(localStorage.getItem(statsKey) || '{"totalAnswered":0,"totalCorrect":0}');
+    localStorage.setItem(statsKey, JSON.stringify({
+      totalAnswered: globalStats.totalAnswered + data.total,
+      totalCorrect: globalStats.totalCorrect + data.score
+    }));
   };
 
   const backHome = () => {

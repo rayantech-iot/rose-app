@@ -24,15 +24,30 @@ const itemVariants = {
 
 export default function Home({ onStart, theme, onToggleTheme, user, onLogout }) {
   const [revisionCount, setRevisionCount] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('revisionQuestions') || '[]').length; }
+    try {
+      const key = `${user}_revisionQuestions`;
+      return JSON.parse(localStorage.getItem(key) || '[]').length;
+    }
     catch { return 0; }
   });
 
   const handleResetRevision = (e) => {
     e.stopPropagation();
-    localStorage.setItem('revisionQuestions', JSON.stringify([]));
+    const key = `${user}_revisionQuestions`;
+    localStorage.setItem(key, JSON.stringify([]));
     setRevisionCount(0);
   };
+
+  const userStats = (() => {
+    try {
+      const statsKey = `${user}_stats`;
+      return JSON.parse(localStorage.getItem(statsKey) || '{"totalAnswered":0,"totalCorrect":0}');
+    } catch { return { totalAnswered: 0, totalCorrect: 0 }; }
+  })();
+
+  const globalAccuracy = userStats.totalAnswered > 0
+    ? Math.round((userStats.totalCorrect / userStats.totalAnswered) * 100)
+    : 0;
 
   const themeQuestionCount = (id) => questions.filter(q => q.theme === id).length;
 
@@ -125,13 +140,13 @@ export default function Home({ onStart, theme, onToggleTheme, user, onLogout }) 
               <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.875rem' }}>
                 Vue d'ensemble
               </p>
-              <div style={{ display: 'flex', gap: '2.25rem' }}>
+              <div style={{ display: 'flex', gap: '1.75rem' }}>
                 {[
-                  { val: '120', lbl: 'Questions' },
-                  { val: '6',   lbl: 'Thèmes' },
-                ].map(({ val, lbl }) => (
+                  { val: userStats.totalAnswered, lbl: 'Traitées', color: 'var(--text-primary)' },
+                  { val: globalAccuracy + '%',   lbl: 'Précision', color: 'var(--gold)' },
+                ].map(({ val, lbl, color }) => (
                   <div key={lbl}>
-                    <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '1.375rem', fontWeight: 700, color: 'var(--gold)', lineHeight: 1 }}>{val}</div>
+                    <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '1.375rem', fontWeight: 700, color: color, lineHeight: 1 }}>{val}</div>
                     <div style={{ fontSize: '0.6875rem', color: 'var(--text-secondary)', marginTop: '0.25rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{lbl}</div>
                   </div>
                 ))}
