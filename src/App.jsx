@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Home from './components/Home';
 import Quiz from './components/Quiz';
 import Result from './components/Result';
+import Login from './components/Login';
 import { questions } from './data/questions';
 
 function App() {
@@ -10,6 +11,9 @@ function App() {
   const [results, setResults] = useState(null);
   const [mode, setMode] = useState(null);
   const [selectedThemeId, setSelectedThemeId] = useState(null);
+  const [user, setUser] = useState(() => {
+    return localStorage.getItem('juris-user') || null;
+  });
 
   // ── THEME ──────────────────────────────────────────
   const [theme, setTheme] = useState(() => {
@@ -72,10 +76,30 @@ function App() {
     setMode(null);
   };
 
+  const handleLogin = (name) => {
+    setUser(name);
+    localStorage.setItem('juris-user', name);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('juris-user');
+  };
+
+  if (!user) {
+    return <Login onLogin={handleLogin} />;
+  }
+
   return (
     <div>
       {view === 'home' && (
-        <Home onStart={startQuiz} theme={theme} onToggleTheme={toggleTheme} />
+        <Home
+          onStart={startQuiz}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          user={user}
+          onLogout={handleLogout}
+        />
       )}
       {view === 'quiz' && (
         <Quiz
@@ -86,6 +110,7 @@ function App() {
           themeId={selectedThemeId}
           theme={theme}
           onToggleTheme={toggleTheme}
+          user={user}
         />
       )}
       {view === 'result' && (
@@ -95,6 +120,7 @@ function App() {
           mode={mode}
           theme={theme}
           onToggleTheme={toggleTheme}
+          user={user}
         />
       )}
     </div>

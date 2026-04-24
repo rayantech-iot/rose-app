@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, Globe, BrainCircuit, Scale, BookMarked, Network, Shuffle, RotateCcw, ChevronRight, Trash2 } from 'lucide-react';
+import { BookOpen, Globe, BrainCircuit, Scale, BookMarked, Network, Shuffle, RotateCcw, ChevronRight, Trash2, LogOut } from 'lucide-react';
 import { themes, questions } from '../data/questions';
 import ThemeToggle from './ThemeToggle';
 
@@ -22,7 +22,7 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.38, ease: [0.4, 0, 0.2, 1] } }
 };
 
-export default function Home({ onStart, theme, onToggleTheme }) {
+export default function Home({ onStart, theme, onToggleTheme, user, onLogout }) {
   const [revisionCount, setRevisionCount] = useState(() => {
     try { return JSON.parse(localStorage.getItem('revisionQuestions') || '[]').length; }
     catch { return 0; }
@@ -39,7 +39,17 @@ export default function Home({ onStart, theme, onToggleTheme }) {
   return (
     <div className="page-wrapper">
       {/* ── HERO ── */}
-      <header style={{ display: 'flex', justifyContent: 'flex-end', padding: '1rem 1.25rem' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.25rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="badge" style={{ background: 'var(--gold-dim)', color: 'var(--gold)', border: '1px solid var(--gold-border)' }}>
+            <span className="gold-dot" style={{ width: 6, height: 6 }} />
+            Session: {user}
+          </div>
+          <button className="theme-toggle" onClick={onLogout} title="Se déconnecter" style={{ width: 'auto', padding: '0 0.75rem', gap: '0.5rem', fontSize: '0.8125rem' }}>
+            <LogOut size={14} />
+            <span>Quitter</span>
+          </button>
+        </div>
         <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </header>
 

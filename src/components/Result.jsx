@@ -37,7 +37,7 @@ function getLevel(pct) {
 const containerVar = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
 const itemVar = { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
 
-export default function Result({ results, onRetry, theme, onToggleTheme }) {
+export default function Result({ results, onRetry, theme, onToggleTheme, user }) {
   const { score, total, errors, themeStats } = results;
   const percentage = Math.round((score / total) * 100);
   const level = getLevel(percentage);
@@ -74,10 +74,12 @@ export default function Result({ results, onRetry, theme, onToggleTheme }) {
         <button className="btn btn-ghost btn-sm" onClick={onRetry}>
           <HomeIcon size={15} /> Accueil
         </button>
-        <span style={{ fontFamily: "'Playfair Display',serif", fontWeight: 600, color: 'var(--gold)', fontSize: '0.9375rem' }}>
-          Bilan de session
-        </span>
-        <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+          <div className="badge" style={{ background: 'var(--gold-dim)', color: 'var(--gold)', letterSpacing: '0.02em', textTransform: 'none' }}>
+            {user}
+          </div>
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+        </div>
       </div>
 
       {/* ── CONTENT ── */}

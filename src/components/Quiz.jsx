@@ -21,7 +21,7 @@ const slideVariants = {
   exit:   (dir) => ({ opacity: 0, x: dir > 0 ? -28 : 28 }),
 };
 
-export default function Quiz({ questions, onFinish, onCancel, theme, onToggleTheme }) {
+export default function Quiz({ questions, onFinish, onCancel, theme, onToggleTheme, user }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -85,6 +85,9 @@ export default function Quiz({ questions, onFinish, onCancel, theme, onToggleThe
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+          <div className="badge" style={{ background: 'var(--gold-dim)', color: 'var(--gold)', letterSpacing: '0.02em', textTransform: 'none' }}>
+            {user}
+          </div>
           <div className="quiz-topbar__counter">
             {currentIndex + 1}<span> / {questions.length}</span>
           </div>
